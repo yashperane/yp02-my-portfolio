@@ -4,6 +4,19 @@ const express = require('express')
 const port = 3000
 const app = express()
 const projectdb = require('./models/project.js');
+const blogdb = require('./models/blog.js')
+
+
+// this middleware is used for tracking every activity occurs on server 
+app.use((req, res, next) => {
+    console.log(req.method, req.url)
+
+    res.on('finish', () => {
+        console.log(res.statusCode)
+    })
+
+    next()
+})
 
 app.use(express.json())
 app.use(cors())
@@ -22,7 +35,8 @@ moongose.connect('mongodb://localhost:27017/portfolio')
 app.get('/', (req, res) => {
     res.send("<h1> hello world</h1>")
 })
-
+//-----project releted api started at this point-------
+// this post request endpoint creates new projects
 app.post('/create-new-project', async (req, res) => {
     try {
         const createNewProject = await projectdb.create(req.body)
@@ -33,6 +47,7 @@ app.post('/create-new-project', async (req, res) => {
         res.status(500).json({ message: err.message })
     }
 })
+// this get request endpoint sends all projects to client
 app.get('/getProjects', async (req, res) => {
     try {
         const getProject = await projectdb.find()
@@ -41,8 +56,9 @@ app.get('/getProjects', async (req, res) => {
             return res.status(200).json({ message: "No Data Avialable" })
         }
 
-        res.status(200).json({total:getProject.length,
-            allprojects:getProject
+        res.status(200).json({
+            total: getProject.length,
+            allprojects: getProject
         })
 
     }
@@ -50,6 +66,7 @@ app.get('/getProjects', async (req, res) => {
         res.status(500).json({ message: err.message })
     }
 })
+// this patch request endpoint update our project 
 app.patch('/update-project/:id', async (req, res) => {
     try {
         const updatedProject = await projectdb.findByIdAndUpdate(req.params.id, req.body, { new: true })
@@ -62,16 +79,33 @@ app.patch('/update-project/:id', async (req, res) => {
         res.status(500).json({ message: err.message })
     }
 })
+// this delete request endpoint deletes our project 
 app.delete('/delete-project/:id', async (req, res) => {
     try {
-        const deletedproject = await projectdb.findByIdAndDelete(req.params.id)
+        const deletedProject = await projectdb.findByIdAndDelete(req.params.id)
 
-        if (!deletedproject) {
+        if (!deletedProject) {
             return res.status(404).json("project not found in database")
         }
         res.status(200).json({
-            deletedproject: deletedproject
+            deletedProject: deletedProject
         })
+    }
+    catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+})
+
+//-----blog releted api started at this point-------
+// this post  request endpoint create new blog  
+app.post('/create-new-blog', async (req, res) => {
+    try {
+        const createNewBlog = await blogdb.create(req.body)
+
+        if (!createNewBlog) {
+            return res.status(501).json("Something went wrong")
+        }
+        res.status(200).json({ cretedBlog: createNewBlog })
     }
     catch (err) {
         res.status(500).json({ message: err.message })
