@@ -4,7 +4,7 @@ const express = require('express')
 const port = 3000
 const app = express()
 const projectdb = require('./models/project.js');
-const blogdb = require('./models/blog.js')
+const blogdb = require('./models/blog.js');
 
 
 // this middleware is used for tracking every activity occurs on server 
@@ -110,4 +110,21 @@ app.post('/create-new-blog', async (req, res) => {
     catch (err) {
         res.status(500).json({ message: err.message })
     }
+})
+app.get('/getBlog', async (req, res) => {
+    try {
+        const getAllBlogs = await blogdb.find()
+
+        if (getAllBlogs.length===0) {
+            return res.status(404).json("No Blogs Avialble")
+        }
+        res.status(200).json({
+            total: getAllBlogs.length,
+            allBlogList: getAllBlogs
+        })
+    }
+    catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+
 })
