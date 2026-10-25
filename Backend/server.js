@@ -115,7 +115,7 @@ app.get('/getBlog', async (req, res) => {
     try {
         const getAllBlogs = await blogdb.find()
 
-        if (getAllBlogs.length===0) {
+        if (getAllBlogs.length === 0) {
             return res.status(404).json("No Blogs Avialble")
         }
         res.status(200).json({
@@ -127,4 +127,36 @@ app.get('/getBlog', async (req, res) => {
         res.status(500).json({ message: err.message })
     }
 
+})
+app.patch('/update-blog/:id', async (req, res) => {
+    try {
+        const updatedBlog = await blogdb.findByIdAndUpdate(req.params.id, req.body, { new: true })
+
+        if (!updatedBlog) {
+            return res.status(404).json({
+                Server: "Unable To Perform Operation"
+            })
+        }
+        res.status(200).json({
+            updatedBlog: updatedBlog
+        })
+    }
+    catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+})
+app.delete('/delete-blog/:id', async (req, res) => {
+    try {
+        const deletedBlog = await blogdb.findByIdAndDelete(req.params.id)
+
+        if (!deletedBlog) {
+             return res.status(404).json("not found")
+        }
+        res.status(200).json({
+            deletedBlog:deletedBlog
+        })
+    }
+    catch(err){
+        res.status(500).json({message:err.message})
+    }
 })
