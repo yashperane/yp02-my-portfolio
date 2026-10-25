@@ -5,8 +5,9 @@ const projectSchema = new moongoose.Schema({
     liveLink: { type: String },
     des: { type: String },
     projectCover: { type: String, required: true },
-    linkedBlog:[{ name: String, url: String }]
-})
+    linkedBlog: [{ name: String, url: String }],
+    isPublished: { type: Boolean, default: false }
+}, { timestamps: true })
 
 const projectdb = moongoose.model('projectdb', projectSchema)
 

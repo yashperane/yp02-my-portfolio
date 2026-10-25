@@ -5,7 +5,8 @@ const blogSchema = new mongoose.Schema({
     des: { type: String },
     blogContent: { type: String, required: true },
     blogCover: { type: String, required: true },
-    linkedProject: [{ name: String, url: String }]
+    linkedProject: [{ name: String, url: String }],
+    isPublished: { type: Boolean, default: false }
 }, { timestamps: true })
 
 const blogdb = mongoose.model('blogdb', blogSchema)
