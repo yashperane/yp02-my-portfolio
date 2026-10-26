@@ -1,6 +1,6 @@
-const moongoose = require('mongoose')
+const mongoose = require('mongoose')
 
-const projectSchema = new moongoose.Schema({
+const projectSchema = new mongoose.Schema({
     projectName: { type: String, required: true, unique: true },
     liveLink: { type: String },
     des: { type: String },
@@ -9,6 +9,6 @@ const projectSchema = new moongoose.Schema({
     isPublished: { type: Boolean, default: false }
 }, { timestamps: true })
 
-const projectdb = moongoose.model('projectdb', projectSchema)
+const projectdb = mongoose.model('projectdb', projectSchema)
 
 module.exports = projectdb;

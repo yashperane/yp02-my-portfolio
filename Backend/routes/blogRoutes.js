@@ -6,12 +6,12 @@ const blogdb=require('../models/blog.js')
 // this post  request endpoint create new blog  
 router.post('/create-new-blog', async (req, res) => {
     try {
-        const createNewBlog = await blogdb.create(req.body)
+        const createdBlog = await blogdb.create(req.body)
 
-        if (!createNewBlog) {
+        if (!createdBlog) {
             return res.status(501).json("Something went wrong")
         }
-        res.status(200).json({ cretedBlog: createNewBlog })
+        res.status(200).json({ cretedBlog: createdBlog })
     }
     catch (err) {
         res.status(500).json({ message: err.message })
