@@ -1,23 +1,48 @@
-const express=require('express')
-const router=express.Router()
-const logindb=require('..//models/login.js')
+const express = require('express')
+const router = express.Router()
+const logindb = require('..//models/login.js')
+const bcryptjs = require('bcryptjs')
 
-router.post('/create-new-account',async (req,res)=>{
-    try{
-        const createdAccount=await logindb.create(req.body)
-        if(!createdAccount){
-           return res.status(404).json("accout not created")
+router.post('/create-new-account', async (req, res) => {
+    try {
+        const { userName, email, password } = req.body
+
+        const existingUser = await logindb.findOne({
+            $or: [{ email: email }, { userName: userName }]
+        })
+
+        if (existingUser) {
+            return res.status(409).json({
+                status: 'fail',
+                message: 'An account with this email address and UserName already exists.'
+            })
         }
-        res.status(200).json({
-            createdAccount:createdAccount
+
+        if (!createdAccount) {
+            return res.status(404).json("accout not created")
+        }
+        const hashedPassword = await bcryptjs.hash(password, 10)
+
+         const createdAccount = await logindb.create({
+            userName,
+            email,
+            password:hashedPassword
+        })
+
+        res.status(201).json({
+            status: 'success',
+            message: 'User registered successfully!',
+            data: {
+                userName: userName,
+                email: createdAccount.email }
         })
 
     }
-    catch(err){
-        res.status(501).json({
-            message:err.message
+    catch (err) {
+        res.status(500).json({
+            message: err.message
         })
     }
 })
 
-module.exports=router;
+module.exports = router;
