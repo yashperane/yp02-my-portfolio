@@ -1,48 +1,30 @@
-const express = require('express')
-const router = express.Router()
-const logindb = require('..//models/login.js')
+const express=require('express')
+const router=express.Router()
+const logindb = require('../models/signIn.js')
 const bcryptjs = require('bcryptjs')
 
-router.post('/create-new-account', async (req, res) => {
-    try {
-        const { userName, email, password } = req.body
+router.post('/login',async(req,res)=>{
+  try{
+    const {userName,email,password}=req.body
 
-        const existingUser = await logindb.findOne({
-            $or: [{ email: email }, { userName: userName }]
-        })
-
-        if (existingUser) {
-            return res.status(409).json({
-                status: 'fail',
-                message: 'An account with this email address and UserName already exists.'
-            })
-        }
-
-        if (!createdAccount) {
-            return res.status(404).json("accout not created")
-        }
-        const hashedPassword = await bcryptjs.hash(password, 10)
-
-         const createdAccount = await logindb.create({
-            userName,
-            email,
-            password:hashedPassword
-        })
-
-        res.status(201).json({
-            status: 'success',
-            message: 'User registered successfully!',
-            data: {
-                userName: userName,
-                email: createdAccount.email }
-        })
-
+    const user=await logindb.findOne({userName})
+    if(!user){
+      return res.status(404).json({message:"user not found"})
     }
-    catch (err) {
-        res.status(500).json({
-            message: err.message
-        })
+
+    const isPasswordCorrect=await bcryptjs.compare( password, user.password)
+
+    if(!isPasswordCorrect){
+        return res.status(401).json("please enter valid password")
     }
+    return res.status(201).json({message:"successfully login",
+      userName:user.userName,
+      email:user.email
+    })
+  }  
+  catch(err){
+    res.status(501).json()
+  }
 })
 
-module.exports = router;
+module.exports=router

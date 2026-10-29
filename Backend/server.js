@@ -5,7 +5,8 @@ const port = 3000
 const app = express()
 const projectRoutes = require('./routes/projectRoutes.js')
 const blogRoutes = require('./routes/blogRoutes.js')
-const loginRoutes = require('./routes/loginRoutes.js')
+const signInRoutes = require('./routes/signInRoutes.js')
+const logInRoutes=require('./routes/loginRoutes.js')
 
 
 // this middleware is used for tracking every activity occurs on server 
@@ -38,4 +39,5 @@ app.get('/', (req, res) => {
 })
 app.use('/', projectRoutes);
 app.use('/', blogRoutes);
-app.use('/', loginRoutes);
+app.use('/', signInRoutes);
+app.use('/',logInRoutes)
